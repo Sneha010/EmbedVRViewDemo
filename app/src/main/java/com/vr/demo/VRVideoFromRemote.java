@@ -17,7 +17,7 @@ import java.io.IOException;
 
 public class VRVideoFromRemote extends AppCompatActivity {
 
-    private static final String TAG = VRVideoFromRemote.class.getSimpleName();
+    private static final String TAG = VRVideoActivity.class.getSimpleName();
 
     /**
      * Preserve the video's state when rotating the phone.
@@ -125,7 +125,7 @@ public class VRVideoFromRemote extends AppCompatActivity {
         protected Boolean doInBackground(Uri... uri) {
             try {
                 if (uri == null || uri.length < 1 || uri[0] == null) {
-                    videoWidgetView.loadVideoFromAsset("congo.mp4");
+                    videoWidgetView.loadVideo(Uri.parse("http://techslides.com/demos/sample-videos/small.mp4"));
                 } else {
                     videoWidgetView.loadVideo(uri[0]);
                 }
