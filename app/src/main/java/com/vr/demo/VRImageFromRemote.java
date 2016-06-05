@@ -14,15 +14,13 @@ import android.widget.Toast;
 import com.google.vr.sdk.widgets.pano.VrPanoramaEventListener;
 import com.google.vr.sdk.widgets.pano.VrPanoramaView;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-public class VRImageActivity extends AppCompatActivity {
+public class VRImageFromRemote extends AppCompatActivity {
 
-    private static final String TAG = VRImageActivity.class.getSimpleName();
+    private static final String TAG = VRImageFromRemote.class.getSimpleName();
     private VrPanoramaView panoWidgetView;
     private boolean loadImageSuccessful;
     /** Configuration information for the panorama. **/
@@ -62,7 +60,7 @@ public class VRImageActivity extends AppCompatActivity {
         public void onLoadError(String errorMessage) {
             loadImageSuccessful = false;
             Toast.makeText(
-                    VRImageActivity.this, "Error loading pano: " + errorMessage, Toast.LENGTH_LONG)
+                    VRImageFromRemote.this, "Error loading pano: " + errorMessage, Toast.LENGTH_LONG)
                     .show();
             Log.e(TAG, "Error loading pano: " + errorMessage);
         }
@@ -102,26 +100,15 @@ public class VRImageActivity extends AppCompatActivity {
         protected Boolean doInBackground(Pair<Uri, VrPanoramaView.Options>... fileInformation) {
             VrPanoramaView.Options panoOptions = null;  // It's safe to use null VrPanoramaView.Options.
             InputStream istr = null;
-            if (fileInformation == null || fileInformation.length < 1
-                    || fileInformation[0] == null || fileInformation[0].first == null) {
-                AssetManager assetManager = getAssets();
+
                 try {
-                    istr = assetManager.open("andes.jpg");
-                    panoOptions = new VrPanoramaView.Options();
-                    panoOptions.inputType = VrPanoramaView.Options.TYPE_STEREO_OVER_UNDER;
-                } catch (IOException e) {
-                    Log.e(TAG, "Could not decode default bitmap: " + e);
-                    return false;
-                }
-            } else {
-                try {
-                    istr = new FileInputStream(new File(fileInformation[0].first.getPath()));
+                    istr = new URL("http://library.nuigalway.ie/media/training/afternoon/Xmas_Cupcakes.JPG").openStream();
                     panoOptions = fileInformation[0].second;
                 } catch (IOException e) {
                     Log.e(TAG, "Could not load file: " + e);
                     return false;
                 }
-            }
+
 
 
             panoWidgetView.loadImageFromBitmap(BitmapFactory.decodeStream(istr), panoOptions);
@@ -142,23 +129,10 @@ public class VRImageActivity extends AppCompatActivity {
      */
     private void handleIntent(Intent intent) {
         // Determine if the Intent contains a file to load.
-        if (Intent.ACTION_VIEW.equals(intent.getAction())) {
-            Log.i(TAG, "ACTION_VIEW Intent recieved");
 
-            fileUri = intent.getData();
-            if (fileUri == null) {
-                Log.w(TAG, "No data uri specified. Use \"-d /path/filename\".");
-            } else {
-                Log.i(TAG, "Using file " + fileUri.toString());
-            }
-
-            panoOptions.inputType = intent.getIntExtra("inputType", VrPanoramaView.Options.TYPE_MONO);
-            Log.i(TAG, "Options.inputType = " + panoOptions.inputType);
-        } else {
             Log.i(TAG, "Intent is not ACTION_VIEW. Using default pano image.");
-            fileUri = null;
+            fileUri = Uri.parse("http://library.nuigalway.ie/media/training/afternoon/Xmas_Cupcakes.JPG");
             panoOptions.inputType = VrPanoramaView.Options.TYPE_MONO;
-        }
 
         // Load the bitmap in a background thread to avoid blocking the UI thread. This operation can
         // take 100s of milliseconds.

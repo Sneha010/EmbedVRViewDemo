@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         mVrImageFromRemote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(MainActivity.this , VRImageActivity.class);
+                Intent i = new Intent(MainActivity.this , VRImageFromRemote.class);
                 startActivity(i);
             }
         });
